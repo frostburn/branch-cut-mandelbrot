@@ -16,15 +16,15 @@ ffibuilder.set_source(
         double y = cy[0];
         double magnitude, phase;
         for (int i = 0; i < max_iterations; i++) {
-            magnitude = sqrt(x*x + y*y);
-            if (magnitude > 128) {
+            magnitude = x*x + y*y;
+            if (magnitude > 10000) {
                 cx[0] = x;
                 cy[0] = y;
                 return i;
             }
             phase = (atan2(y, x) + cuts[i])*i_tau;
             phase = ((phase-floor(phase))*tau - cuts[i]) * exponent;
-            magnitude = pow(magnitude, exponent);
+            magnitude = pow(magnitude, exponent*0.5);
             x = cos(phase)*magnitude + cx[0];
             y = sin(phase)*magnitude + cy[0];
         }
@@ -43,7 +43,7 @@ ffibuilder.set_source(
 
             out[i] = escape_time(&x, &y, exponent, cuts, max_iterations);
             if (out[i] < max_iterations) {
-                out[i] -= log(log(x*x + y*y)*0.5)/log(exponent);
+                out[i] -= log(log(x*x + y*y)*0.5)/log(fabs(exponent));
             }
         }
         return 0;

@@ -35,25 +35,11 @@ def do_render(args, writer):
         cut_buf[i] = 100*(random()-0.5)
     for n in progressbar.progressbar(range(args.num_frames)):
         tg = n / (args.num_frames - 1)
-        if tg < 0.9:
-            t = tg / 0.9
-            lib.mandelbrot(im_buf, args.width, args.height, -t*tanh(t*3), -0.35*t*tanh(t*3), (2*t*t-0.5), 1.01 + t*tanh(t*3)/tanh(3)*0.99, cut_buf, max_iter)
-        else:
-            t = (tg - 0.9)/0.1
-            tp = tg / 0.9
-            prev_x = -tp*tanh(tp*3)
-            prev_y = -0.35*tp*tanh(tp*3)
-            prev_zoom = (2*tp*tp-0.5)
-            new_x = -1+0.3*t
-            new_y = -0.35*(1-t)
-            new_zoom = 1.5 - 2*t*t
-            x = prev_x + (new_x - prev_x) * t
-            y = prev_y + (new_y - prev_y) * t
-            z = prev_zoom + (new_zoom - prev_zoom) * t
-            lib.mandelbrot(im_buf, args.width, args.height, x, y, z, 2.0, cut_buf, max_iter)
+        t = tg
+        lib.mandelbrot(im_buf, args.width, args.height, 0.7, 0.7, 1, -2 - t, cut_buf, max_iter)
         im = array(list(im_buf)).reshape(args.height, args.width)
-        for i in range(max_iter):
-            cut_buf[i] *= 0.05**args.dt
+        # for i in range(max_iter):
+        #     cut_buf[i] *= 0.05**args.dt
         im = sqrt(abs(im) / abs(im).max())
         frame = make_video_frame([im, im, im], indexing=None)
         writer.append_data(frame)
