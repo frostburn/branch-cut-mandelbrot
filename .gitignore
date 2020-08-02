@@ -1,3 +1,7 @@
+# Project compiled CFFI files
+_routines.c
+_routines.o
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
