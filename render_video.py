@@ -28,20 +28,31 @@ def make_video_frame(rgb, indexing='ij', dither=1.0/256.0):
 
 
 def do_render(args, writer):
-    max_iter = 256
+    max_iter = 32
     im_buf = ffi.new("double[]", args.width * args.height)
     cut_buf = ffi.new("double[]", max_iter)
     for i in range(max_iter):
-        cut_buf[i] = 100*(random()-0.5)
+        cut_buf[i] = i*random()
     for n in progressbar.progressbar(range(args.num_frames)):
         tg = n / (args.num_frames - 1)
         t = tg
-        lib.mandelbrot(im_buf, args.width, args.height, 0.7, 0.7, 1, -2 - t, cut_buf, max_iter)
+        lib.mandelbrot(im_buf, args.width, args.height, 0.7, 0.8, 3.5, t-20, cut_buf, max_iter)
         im = array(list(im_buf)).reshape(args.height, args.width)
         # for i in range(max_iter):
         #     cut_buf[i] *= 0.05**args.dt
-        im = sqrt(abs(im) / abs(im).max())
-        frame = make_video_frame([im, im, im], indexing=None)
+        bg = (im < 0)
+        im /= im.max()
+        fg = 1 - bg
+
+        red = im
+        green = 1 - im
+        blue = 4*im*(1-im)
+
+        blue = blue + 0.2*green
+        red = 0.1 + 0.8*red + green**3
+        green = 0.2 + 0.21*green
+
+        frame = make_video_frame([red*fg + 0.15*bg, green*fg + 0.08*bg, blue*fg + 0.1*bg], indexing=None)
         writer.append_data(frame)
 
 

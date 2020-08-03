@@ -30,7 +30,7 @@ ffibuilder.set_source(
         }
         cx[0] = x;
         cy[0] = y;
-        return max_iterations;
+        return -1;
     }
 
     int mandelbrot(double *out, size_t width, size_t height, double center_x, double center_y, double zoom, double exponent, double *cuts, int max_iterations) {
@@ -42,7 +42,7 @@ ffibuilder.set_source(
             y = (2 * y - height) * zoom + center_y;
 
             out[i] = escape_time(&x, &y, exponent, cuts, max_iterations);
-            if (out[i] < max_iterations) {
+            if (out[i] >=  0) {
                 out[i] -= log(log(x*x + y*y)*0.5)/log(fabs(exponent));
             }
         }
