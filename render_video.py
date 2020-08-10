@@ -3,6 +3,7 @@ import imageio
 import progressbar
 from _routines import ffi, lib
 from pylab import *
+from random import Random
 
 RESOLUTIONS = {
     "2160p": (3840, 2160),
@@ -31,8 +32,9 @@ def do_render(args, writer):
     max_iter = 32
     im_buf = ffi.new("double[]", args.width * args.height)
     cut_buf = ffi.new("double[]", max_iter)
+    fixed_seed = Random(1)
     for i in range(max_iter):
-        cut_buf[i] = i*random()
+        cut_buf[i] = i*fixed_seed.random()
     for n in progressbar.progressbar(range(args.num_frames)):
         tg = n / (args.num_frames - 1)
         t = tg
